@@ -6,6 +6,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseService } from '@/lib/supabase/service';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/admin/users - Get all users
 export async function GET(request: NextRequest) {
   try {

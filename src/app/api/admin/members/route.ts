@@ -8,6 +8,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseService } from '@/lib/supabase/service';
 import { v4 as uuidv4 } from 'uuid';
 
+export const dynamic = 'force-dynamic';
+
 // POST /api/admin/members - Create new member
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     const service = getSupabaseService();
-    
+
     // Check if user with this email already exists
     const existingUser = await service.getUserById(Email);
     if (existingUser) {
