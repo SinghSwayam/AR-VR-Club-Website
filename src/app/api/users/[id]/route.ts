@@ -15,7 +15,7 @@ export async function PUT(
     // TODO: Add Firebase Admin auth check
     const userId = params.id;
     const body = await request.json();
-    const { Name, Email, Role, Year, Dept, Designation, MobileNumber } = body;
+    const { Name, Email, Role, Year, Dept, RollNo, Designation, MobileNumber } = body;
 
     // Validation
     if (!Name || !Email) {
@@ -32,6 +32,7 @@ export async function PUT(
       role: (Role || 'student') as 'student' | 'admin',
       year: Year || '',
       dept: Dept || '',
+      roll_no: RollNo || '',
       designation: Designation || '',
       mobile_number: MobileNumber || '',
     });
@@ -44,6 +45,7 @@ export async function PUT(
       Role: updatedUser.role,
       Year: updatedUser.year,
       Dept: updatedUser.dept,
+      RollNo: updatedUser.roll_no,
       Designation: updatedUser.designation,
       MobileNumber: updatedUser.mobile_number,
       CreatedAt: updatedUser.created_at,
@@ -75,7 +77,7 @@ export async function DELETE(
     const userId = params.id;
 
     const service = getSupabaseService();
-    
+
     // Check if user has registrations
     const { supabaseAdmin } = await import('@/lib/supabase/client');
     const { data: registrations } = await supabaseAdmin

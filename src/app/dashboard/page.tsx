@@ -15,7 +15,12 @@ import {
   CheckCircleIcon,
   WarningCircleIcon,
   PencilSimpleIcon,
-  UserIcon
+  UserIcon,
+  CalendarBlankIcon,
+  BuildingsIcon,
+  IdentificationCardIcon,
+  PhoneIcon,
+  HashIcon
 } from '@phosphor-icons/react/dist/ssr';
 
 interface Event {
@@ -27,6 +32,7 @@ interface Event {
   MaxCapacity: number;
   CurrentCount: number;
   Status: 'Open' | 'Full' | 'Closed' | 'Completed';
+  Type: string;
   ImageURL?: string;
   CreatedAt: string;
 }
@@ -256,32 +262,87 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Stats Card */}
-        <div className="glass-card" style={{ marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
-          <img
-            src="https://www.w3schools.com/howto/img_avatar2.png"
-            alt="Profile"
-            style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px solid #3b82f6' }}
-          />
-          <div>
-            <h3 style={{ marginTop: 0, color: 'white', marginBottom: '0.5rem' }}>Welcome, {authUser?.displayName || user.email}!</h3>
-            <button onClick={handleEditProfile} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '1rem', padding: 0 }}>
-              <PencilSimpleIcon size={16} /> Edit Profile
-            </button>
-            <div style={{ display: 'flex', gap: '2rem', color: '#94a3b8', flexWrap: 'wrap', fontSize: '0.95rem' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CalendarCheckIcon size={20} color="#60a5fa" weight="duotone" />
-                Attended: <strong style={{ color: 'white' }}>{eventsAttended}</strong>
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ClipboardTextIcon size={20} color="#60a5fa" weight="duotone" />
-                Registered: <strong style={{ color: 'white' }}>{registrations.length}</strong>
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <TrophyIcon size={20} color="#60a5fa" weight="duotone" />
-                Certificates: <strong style={{ color: 'white' }}>0</strong>
-              </span>
+        {/* Combined Stats & Account Information Card */}
+        <div className="glass-card" style={{ marginBottom: '3rem' }}>
+          {/* Top Section: Profile & Stats */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
+            <img
+              src="https://www.w3schools.com/howto/img_avatar2.png"
+              alt="Profile"
+              style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px solid #3b82f6' }}
+            />
+            <div>
+              <h3 style={{ marginTop: 0, color: 'white', marginBottom: '0.5rem' }}>Welcome, {authUser?.displayName || user.email}!</h3>
+              <button onClick={handleEditProfile} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '1rem', padding: 0 }}>
+                <PencilSimpleIcon size={16} /> Edit Profile
+              </button>
+              <div style={{ display: 'flex', gap: '2rem', color: '#94a3b8', flexWrap: 'wrap', fontSize: '0.95rem' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CalendarCheckIcon size={20} color="#60a5fa" weight="duotone" />
+                  Attended: <strong style={{ color: 'white' }}>{eventsAttended}</strong>
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <ClipboardTextIcon size={20} color="#60a5fa" weight="duotone" />
+                  Registered: <strong style={{ color: 'white' }}>{registrations.length}</strong>
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <TrophyIcon size={20} color="#60a5fa" weight="duotone" />
+                  Certificates: <strong style={{ color: 'white' }}>0</strong>
+                </span>
+              </div>
             </div>
+          </div>
+
+          <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
+
+          {/* Bottom Section: Account Information */}
+          <h3 style={{ marginTop: 0, marginBottom: '2rem', color: 'white', fontSize: '1.25rem' }}>
+            Account Information
+          </h3>
+          <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+
+
+
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+              <div style={{ padding: '10px', background: 'rgba(236, 72, 153, 0.1)', borderRadius: '8px', color: '#f472b6' }}>
+                <CalendarBlankIcon size={24} weight="duotone" />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: 'bold', color: '#94a3b8', fontSize: '0.85rem' }}>Year</label>
+                <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: '500', color: 'white' }}>{userProfile?.Year || authUser?.year || 'Not set'}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+              <div style={{ padding: '10px', background: 'rgba(14, 165, 233, 0.1)', borderRadius: '8px', color: '#38bdf8' }}>
+                <BuildingsIcon size={24} weight="duotone" />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: 'bold', color: '#94a3b8', fontSize: '0.85rem' }}>Department</label>
+                <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: '500', color: 'white' }}>{userProfile?.Dept || authUser?.dept || 'Not set'}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+              <div style={{ padding: '10px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '8px', color: '#a78bfa' }}>
+                <IdentificationCardIcon size={24} weight="duotone" />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: 'bold', color: '#94a3b8', fontSize: '0.85rem' }}>Roll Number</label>
+                <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: '500', color: 'white' }}>{userProfile?.RollNo || authUser?.rollNo || 'Not set'}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+              <div style={{ padding: '10px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '8px', color: '#4ade80' }}>
+                <PhoneIcon size={24} weight="duotone" />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: 'bold', color: '#94a3b8', fontSize: '0.85rem' }}>Mobile Number</label>
+                <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: '500', color: 'white' }}>{userProfile?.MobileNumber || authUser?.mobileNumber || 'Not set'}</p>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -312,7 +373,7 @@ export default function DashboardPage() {
                         <td style={tdStyle}>
                           {new Date(event.StartTime).toLocaleDateString()}
                         </td>
-                        <td style={tdStyle}>Workshop</td>
+                        <td style={tdStyle}>{event.Type || 'Workshop'}</td>
                         <td style={tdStyle}>
                           <span className={`status-badge ${isFull ? 'status-closed' : 'status-active'}`}>{event.Status}</span>
                         </td>
@@ -356,20 +417,28 @@ export default function DashboardPage() {
                 {registrations.length === 0 ? (
                   <tr><td colSpan={5} style={{ ...tdStyle, textAlign: 'center', color: '#64748b', padding: '2rem' }}>No registrations found.</td></tr>
                 ) : (
-                  registrations.map((reg) => (
-                    <tr key={reg.RegistrationID}>
-                      <td style={{ ...tdStyle, fontWeight: 'bold' }}>{reg.EventTitle || 'Unknown'}</td>
-                      <td style={tdStyle}>{reg.EventStartTime ? new Date(reg.EventStartTime).toLocaleDateString() : '-'}</td>
-                      <td style={tdStyle}>
-                        <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>{reg.Year} • {reg.Dept}</div>
-                        <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{reg.RollNo}</div>
-                      </td>
-                      <td style={tdStyle}>{new Date(reg.Timestamp).toLocaleDateString()}</td>
-                      <td style={tdStyle}>
-                        <span className={`status-badge ${reg.Status === 'confirmed' ? 'status-active' : 'status-closed'}`}>{reg.Status}</span>
-                      </td>
-                    </tr>
-                  ))
+                  registrations.map((reg) => {
+                    // Check if event is completed/closed to show "DONE"
+                    const isEventDone = reg.EventStatus === 'Closed' || reg.EventStatus === 'Completed';
+                    const displayStatus = (reg.Status === 'confirmed' && isEventDone) ? 'DONE' : reg.Status;
+
+                    return (
+                      <tr key={reg.RegistrationID}>
+                        <td style={{ ...tdStyle, fontWeight: 'bold' }}>{reg.EventTitle || 'Unknown'}</td>
+                        <td style={tdStyle}>{reg.EventStartTime ? new Date(reg.EventStartTime).toLocaleDateString() : '-'}</td>
+                        <td style={tdStyle}>
+                          <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>{reg.Year} • {reg.Dept}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{reg.RollNo}</div>
+                        </td>
+                        <td style={tdStyle}>{new Date(reg.Timestamp).toLocaleDateString()}</td>
+                        <td style={tdStyle}>
+                          <span className={`status-badge ${displayStatus === 'DONE' || displayStatus === 'confirmed' ? 'status-active' : 'status-closed'}`}>
+                            {displayStatus.toUpperCase()}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

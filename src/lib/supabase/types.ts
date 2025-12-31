@@ -12,6 +12,7 @@ export interface Event {
   max_capacity: number;
   current_count: number;
   status: 'Open' | 'Full' | 'Closed' | 'Completed';
+  type?: string;
   image_url?: string;
   created_at: string;
 }

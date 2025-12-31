@@ -32,6 +32,7 @@ interface Member {
   Role: 'student' | 'admin';
   Year?: string;
   Dept?: string;
+  RollNo?: string;
   Designation?: string;
   MobileNumber?: string;
   CreatedAt: string;
@@ -51,6 +52,7 @@ export default function MemberManagementPage() {
     Role: 'student' as 'student' | 'admin',
     Year: '',
     Dept: '',
+    RollNo: '',
     Designation: '',
     MobileNumber: '',
   });
@@ -126,7 +128,7 @@ export default function MemberManagementPage() {
 
   const handleCreate = () => {
     setEditingMember(null);
-    setFormData({ Name: '', Email: '', Role: 'student', Year: '', Dept: '', Designation: '', MobileNumber: '' });
+    setFormData({ Name: '', Email: '', Role: 'student', Year: '', Dept: '', RollNo: '', Designation: '', MobileNumber: '' });
     setShowModal(true);
   }
 
@@ -138,6 +140,7 @@ export default function MemberManagementPage() {
       Role: m.Role,
       Year: m.Year || '',
       Dept: m.Dept || '',
+      RollNo: m.RollNo || '',
       Designation: m.Designation || '',
       MobileNumber: m.MobileNumber || ''
     });
@@ -265,7 +268,7 @@ export default function MemberManagementPage() {
                     <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
                       <th style={thStyle}>Name / Email</th>
                       <th style={thStyle}>Role</th>
-                      <th style={thStyle}>Year / Dept</th>
+                      <th style={thStyle}>Year / Dept / Roll No</th>
                       <th style={thStyle}>Mobile</th>
                       <th style={thStyle}>Joined</th>
                       <th style={thStyle}>Actions</th>
@@ -285,7 +288,7 @@ export default function MemberManagementPage() {
                           </td>
                           <td style={tdStyle}>
                             <div>{m.Year || '-'}</div>
-                            <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{m.Dept || '-'}</div>
+                            <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{m.Dept || '-'}  •  {m.RollNo || '-'}</div>
                           </td>
                           <td style={tdStyle}>{m.MobileNumber || '-'}</td>
                           <td style={tdStyle}>{formatDate(m.CreatedAt)}</td>
@@ -368,6 +371,11 @@ export default function MemberManagementPage() {
                   <label style={{ color: '#cbd5e1', fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Designation</label>
                   <input className="form-input" value={formData.Designation} onChange={e => setFormData({ ...formData, Designation: e.target.value })} placeholder="e.g. Member" />
                 </div>
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ color: '#cbd5e1', fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Roll Number</label>
+                <input className="form-input" value={formData.RollNo} onChange={e => setFormData({ ...formData, RollNo: e.target.value })} placeholder="e.g. TY-CSE-01" />
               </div>
 
               <div style={{ marginBottom: '1.5rem' }}>

@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
             const eventIds = registrations.map(reg => reg.event_id);
             const { data: events } = await supabaseAdmin
               .from('events')
-              .select('id, title, start_time')
+              .select('id, title, start_time, status')
               .in('id', eventIds);
 
             data = registrations.map(reg => {
@@ -67,6 +67,7 @@ export async function GET(request: NextRequest) {
                 ...reg,
                 event_title: event?.title || 'Unknown Event',
                 event_start_time: event?.start_time || '',
+                event_status: event?.status || '',
               };
             });
           } else {
@@ -145,6 +146,25 @@ export async function GET(request: NextRequest) {
         // Add data rows
         if (type === 'registrations') {
           data.forEach((row: any) => {
+            // Logic to determine status for export
+            // Note: row contains event_title and combined data from getFilteredRegistrations + event lookup
+            // BUT, wait, in GET handlers above (lines 64-70), we only mapped title and start_time.
+            // We need to fetch STATUS too to implement the same logic here!
+            // Let's first look at line 61: .select('id, title, start_time')
+            // I need to update THAT first. 
+            // Since I can't edit two places in one replace_file_content call easily if they are far apart,
+            // I should use multi_replace_file_content or just update the SELECT query first.
+            // Wait, I am in the middle of replacing the writing loop.
+            // If the data doesn't have status, this change is useless.
+            // I will ABORT this replacement and use multi_replace to do both.
+            // Actually, I can't abort a tool call.
+            // I will write the logic assuming `row.event_status` exists, and then I will update the query in the next step or same step if I use multi_replace. 
+            // The instruction says "Update the export logic". 
+            // I will use `row.event_status` here.
+
+            const isEventDone = row.event_status === 'Closed' || row.event_status === 'Completed';
+            const displayStatus = (row.status === 'confirmed' && isEventDone) ? 'DONE' : row.status;
+
             worksheet.addRow([
               row.event_title || row.event_id || 'Unknown Event',
               row.user_email || '',
@@ -153,7 +173,7 @@ export async function GET(request: NextRequest) {
               row.roll_no || '',
               row.mobile_number || '',
               row.timestamp ? new Date(row.timestamp).toLocaleString() : '',
-              row.status || '',
+              displayStatus || '',
             ]);
           });
         } else if (type === 'users') {
@@ -215,16 +235,21 @@ export async function GET(request: NextRequest) {
 
         if (type === 'registrations') {
           headers = ['Event Name', 'User Email', 'Year', 'Department', 'Roll No.', 'Mobile Number', 'Registered On', 'Status'];
-          rows = data.map((row: any) => [
-            row.event_title || row.event_id || 'Unknown Event',
-            row.user_email || '',
-            row.year || '',
-            row.dept || '',
-            row.roll_no || '',
-            row.mobile_number || '',
-            row.timestamp ? new Date(row.timestamp).toLocaleString() : '',
-            row.status || '',
-          ]);
+          rows = data.map((row: any) => {
+            const isEventDone = row.event_status === 'Closed' || row.event_status === 'Completed';
+            const displayStatus = (row.status === 'confirmed' && isEventDone) ? 'DONE' : row.status;
+
+            return [
+              row.event_title || row.event_id || 'Unknown Event',
+              row.user_email || '',
+              row.year || '',
+              row.dept || '',
+              row.roll_no || '',
+              row.mobile_number || '',
+              row.timestamp ? new Date(row.timestamp).toLocaleString() : '',
+              displayStatus || '',
+            ]
+          });
         } else if (type === 'users') {
           headers = ['Name', 'Email', 'Mobile Number', 'Designation', 'Role', 'Year', 'Department', 'Joined Date'];
           rows = data.map((row: any) => [

@@ -11,7 +11,7 @@ export async function GET() {
   try {
     const service = getSupabaseService();
     const events = await service.getAllEvents();
-    
+
     // Transform to match expected format (for backward compatibility with frontend)
     const transformedEvents = events.map(event => ({
       ID: event.id,
@@ -22,10 +22,11 @@ export async function GET() {
       MaxCapacity: event.max_capacity,
       CurrentCount: event.current_count,
       Status: event.status,
+      Type: event.type || 'Workshop',
       ImageURL: event.image_url,
       CreatedAt: event.created_at,
     }));
-    
+
     return NextResponse.json({
       success: true,
       data: transformedEvents,
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
     // Verify token and check admin role
 
     const body = await request.json();
-    const { Title, Description, StartTime, EndTime, MaxCapacity, ImageURL, Status } = body;
+    const { Title, Description, StartTime, EndTime, MaxCapacity, ImageURL, Status, Type } = body;
 
     // Validation
     if (!Title || !Description || !StartTime || !EndTime || !MaxCapacity) {
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
       end_time: EndTime,
       max_capacity: parseInt(MaxCapacity, 10),
       status: (Status || 'Open') as 'Open' | 'Full' | 'Closed' | 'Completed',
+      type: Type || 'Workshop',
       image_url: ImageURL || '',
     });
 
@@ -84,6 +86,7 @@ export async function POST(request: NextRequest) {
       MaxCapacity: newEvent.max_capacity,
       CurrentCount: newEvent.current_count,
       Status: newEvent.status,
+      Type: newEvent.type || 'Workshop',
       ImageURL: newEvent.image_url,
       CreatedAt: newEvent.created_at,
     };

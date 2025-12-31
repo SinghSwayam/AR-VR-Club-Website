@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import { GithubLogoIcon, LinkedinLogoIcon, UserIcon, EnvelopeSimpleIcon } from '@phosphor-icons/react/dist/ssr';
 import { Tilt } from 'react-tilt';
 
@@ -21,8 +21,8 @@ const facultyMember: TeamMember = {
 };
 
 const teamMembers: TeamMember[] = [
-    { name: 'Anshul Zilpe', role: 'President', image: '/Assets/Pfp/Anshul_pfp.jpg', linkedin: 'https://www.linkedin.com/in/anshul-zilpe-245b87332/', github: 'https://github.com/aNsHuL5217' },
     { name: 'Snehal Jadhav', role: 'Vice President', image: '/Assets/Pfp/Media/Snehal_pfp.jpg', linkedin: 'https://www.linkedin.com/in/snehal-jadhav-0ab64a321/', github: 'https://github.com/snehaljadhav7317' },
+    { name: 'Anshul Zilpe', role: 'President', image: '/Assets/Pfp/Anshul_pfp.jpg', linkedin: 'https://www.linkedin.com/in/anshul-zilpe-245b87332/', github: 'https://github.com/aNsHuL5217' },
     { name: 'Uday Salathia', role: 'Technical Lead', image: '/Assets/Pfp/Media/Uday_pfp.jpg', linkedin: 'https://www.linkedin.com/in/uday-salathia-6b13a11b5/', github: 'https://github.com/uday-1602' },
 ];
 
@@ -63,11 +63,32 @@ export default function Team() {
                 </div>
 
                 {/* MEMBER GRID */}
-                <div className="grid-layout">
-                    {displayMembers.map((member, index) => (
-                        <MemberCard key={index} member={member} color={getRoleColor(member.role)} />
-                    ))}
-                </div>
+                <motion.div
+                    layout
+                    className="grid-layout"
+                >
+                    <AnimatePresence>
+                        {displayMembers.map((member, index) => (
+                            <motion.div
+                                key={member.name}
+                                layout
+                                initial={{ opacity: 0, scale: 0.9, y: 100 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 50 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: index * 0.05,
+                                    type: "spring",
+                                    stiffness: 260,
+                                    damping: 20,
+                                    mass: 1
+                                }}
+                            >
+                                <MemberCard member={member} color={getRoleColor(member.role)} />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
 
                 <div style={{ textAlign: 'center', marginTop: '4rem' }}>
                     <button onClick={() => setShowAll(!showAll)} className="btn-outline">

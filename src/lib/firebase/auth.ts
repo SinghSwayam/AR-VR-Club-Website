@@ -25,6 +25,10 @@ export interface AuthUser {
   email: string | null;
   displayName: string | null;
   role?: 'student' | 'admin';
+  year?: string;
+  dept?: string;
+  rollNo?: string;
+  mobileNumber?: string;
 }
 
 /**
@@ -215,6 +219,10 @@ export async function getCurrentUserWithRole(): Promise<AuthUser | null> {
           email: user.email,
           displayName: user.displayName,
           role: role as 'student' | 'admin',
+          year: data.data?.Year || data.data?.year || '',
+          dept: data.data?.Dept || data.data?.dept || '',
+          rollNo: data.data?.RollNo || data.data?.roll_no || '',
+          mobileNumber: data.data?.MobileNumber || data.data?.mobile_number || '',
         });
       } catch (error) {
         // If database lookup fails, return user without role

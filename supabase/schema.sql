@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS events (
   max_capacity INTEGER NOT NULL DEFAULT 50,
   current_count INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'Open' CHECK (status IN ('Open', 'Full', 'Closed', 'Completed')),
+  type TEXT DEFAULT 'Workshop',
   image_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
       Role: user.role,
       Year: user.year || '',
       Dept: user.dept || '',
+      RollNo: user.roll_no || '',
       Designation: user.designation || '',
       MobileNumber: user.mobile_number || '',
       CreatedAt: user.created_at,

@@ -18,7 +18,7 @@ import {
 interface Event {
   ID: string; Title: string; Description: string; StartTime: string; EndTime: string;
   MaxCapacity: number; CurrentCount: number; Status: 'Open' | 'Full' | 'Closed' | 'Completed';
-  ImageURL?: string; CreatedAt: string;
+  Type: string; ImageURL?: string; CreatedAt: string;
 }
 
 export default function EventManagementPage() {
@@ -30,7 +30,7 @@ export default function EventManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [formData, setFormData] = useState({
-    Title: '', Description: '', StartTime: '', EndTime: '', MaxCapacity: '', ImageURL: '', Status: 'Open' as any,
+    Title: '', Description: '', StartTime: '', EndTime: '', MaxCapacity: '', ImageURL: '', Status: 'Open' as any, Type: 'Workshop',
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -70,7 +70,7 @@ export default function EventManagementPage() {
 
   const handleCreate = () => {
     setEditingEvent(null);
-    setFormData({ Title: '', Description: '', StartTime: '', EndTime: '', MaxCapacity: '', ImageURL: '', Status: 'Open' });
+    setFormData({ Title: '', Description: '', StartTime: '', EndTime: '', MaxCapacity: '', ImageURL: '', Status: 'Open', Type: 'Workshop' });
     setShowModal(true);
   };
 
@@ -80,7 +80,7 @@ export default function EventManagementPage() {
       Title: event.Title, Description: event.Description,
       StartTime: new Date(event.StartTime).toISOString().slice(0, 16),
       EndTime: new Date(event.EndTime).toISOString().slice(0, 16),
-      MaxCapacity: event.MaxCapacity.toString(), ImageURL: event.ImageURL || '', Status: event.Status,
+      MaxCapacity: event.MaxCapacity.toString(), ImageURL: event.ImageURL || '', Status: event.Status, Type: event.Type || 'Workshop',
     });
     setShowModal(true);
   };
@@ -170,6 +170,7 @@ export default function EventManagementPage() {
                   <thead>
                     <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
                       <th style={thStyle}>Title</th>
+                      <th style={thStyle}>Type</th>
                       <th style={thStyle}>Date</th>
                       <th style={thStyle}>Time</th>
                       <th style={thStyle}>Capacity</th>
@@ -181,6 +182,7 @@ export default function EventManagementPage() {
                     {events.map((event) => (
                       <tr key={event.ID}>
                         <td style={{ ...tdStyle, fontWeight: 'bold' }}>{event.Title}</td>
+                        <td style={tdStyle}>{event.Type || 'Workshop'}</td>
                         <td style={tdStyle}>{new Date(event.StartTime).toLocaleDateString()}</td>
                         <td style={{ ...tdStyle, fontFamily: 'monospace', color: '#cbd5e1' }}>
                           {new Date(event.StartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -203,7 +205,7 @@ export default function EventManagementPage() {
                         </td>
                       </tr>
                     ))}
-                    {events.length === 0 && <tr><td colSpan={6} style={{ ...tdStyle, textAlign: 'center', color: '#94a3b8', padding: '3rem' }}>No events found.</td></tr>}
+                    {events.length === 0 && <tr><td colSpan={7} style={{ ...tdStyle, textAlign: 'center', color: '#94a3b8', padding: '3rem' }}>No events found.</td></tr>}
                   </tbody>
                 </table>
               </div>
@@ -235,6 +237,18 @@ export default function EventManagementPage() {
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: '#cbd5e1' }}>Description</label>
                 <textarea className="form-input" rows={3} value={formData.Description} onChange={(e) => setFormData({ ...formData, Description: e.target.value })} required disabled={submitting} />
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: '#cbd5e1' }}>Event Type</label>
+                <select className="form-input" value={formData.Type} onChange={(e) => setFormData({ ...formData, Type: e.target.value })} disabled={submitting}>
+                  <option value="Workshop" style={{ color: 'black' }}>Workshop</option>
+                  <option value="Seminar" style={{ color: 'black' }}>Seminar</option>
+                  <option value="Webinar" style={{ color: 'black' }}>Webinar</option>
+                  <option value="Hackathon" style={{ color: 'black' }}>Hackathon</option>
+                  <option value="Meetup" style={{ color: 'black' }}>Meetup</option>
+                  <option value="Competition" style={{ color: 'black' }}>Competition</option>
+                </select>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
