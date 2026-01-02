@@ -56,7 +56,7 @@ export default function InquiriesManagementPage() {
     try {
       setLoading(true); setError('');
       
-      // FIX: Add timestamp query param to force fresh data fetch
+      // FIX: Add timestamp query param to bust cache
       const t = new Date().getTime();
       const response = await fetch(`/api/admin/inquiries?t=${t}`, { 
           cache: 'no-store',
@@ -108,8 +108,8 @@ export default function InquiriesManagementPage() {
 
   const thStyle = { padding: '12px 16px', textAlign: 'left' as const, borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', fontSize: '0.85rem', textTransform: 'uppercase' as const };
   const tdStyle = { padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white', fontSize: '0.95rem' };
-  
-  // Dark style for select options
+
+  // Common dark style for options
   const optionStyle = { backgroundColor: '#1e293b', color: 'white' };
 
   return (

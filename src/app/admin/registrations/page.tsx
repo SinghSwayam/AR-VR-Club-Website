@@ -32,7 +32,6 @@ interface Registration {
   event_title?: string;
 }
 
-// FIX: Updated interface to support both casing styles from API
 interface Event { 
     id?: string; 
     ID?: string;
@@ -70,9 +69,12 @@ export default function RegistrationsManagementPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const regRes = await fetch('/api/admin/registrations', {
+      
+      // FIX: Add timestamp query param to bust cache
+      const t = new Date().getTime();
+      const regRes = await fetch(`/api/admin/registrations?t=${t}`, {
         cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
       });
       const regData = await regRes.json();
 
@@ -80,7 +82,7 @@ export default function RegistrationsManagementPage() {
         setRegistrations(regData.data);
       }
 
-      const evtRes = await fetch('/api/events', { cache: 'no-store' });
+      const evtRes = await fetch(`/api/events?t=${t}`, { cache: 'no-store' });
       const evtData = await evtRes.json();
       if (evtData.success) setEvents(evtData.data);
     } catch (e: any) {
@@ -147,8 +149,8 @@ export default function RegistrationsManagementPage() {
                 </p>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn-outline" onClick={fetchData} title="Refresh"><ArrowsClockwiseIcon size={18} /></button>
-                <button className="btn" onClick={() => handleExport('excel')}><DownloadSimpleIcon size={18} style={{ marginRight: '8px' }} /> Excel</button>
+                <button className="btn-outline" onClick={fetchData} title="Refresh"><ArrowsClockwiseIcon size={18}  /></button>
+                <button className="btn" onClick={() => handleExport('excel')}><DownloadSimpleIcon size={18}  style={{ marginRight: '8px' }} /> Excel</button>
                 <button className="btn-outline" onClick={() => handleExport('pdf')} title="PDF"><DownloadSimpleIcon size={18}  /></button>
               </div>
             </div>
@@ -160,7 +162,6 @@ export default function RegistrationsManagementPage() {
                   <select className="form-input" value={filters.eventId} onChange={(e) => setFilters({ ...filters, eventId: e.target.value })} style={{ marginBottom: 0 }}>
                     <option value="" style={optionStyle}>All Events</option>
                     {events.map(e => {
-                        // FIX: Access ID/Title regardless of case
                         const id = e.id || e.ID;
                         const title = e.title || e.Title;
                         return <option key={id} value={id} style={optionStyle}>{title}</option>
@@ -198,7 +199,6 @@ export default function RegistrationsManagementPage() {
                   <tbody>
                     {filteredRegistrations.length > 0 ? (
                       filteredRegistrations.map(r => {
-                        // Find event status if needed for UI, similar to User Dashboard logic
                         const event = events.find((e) => (e.id === r.event_id || e.ID === r.event_id));
                         const eventStatus = (event as any)?.Status || (event as any)?.status;
                         const isEventDone = eventStatus === 'Closed' || eventStatus === 'Completed';

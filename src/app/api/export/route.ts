@@ -8,6 +8,9 @@ import { getSupabaseService } from '@/lib/supabase/service';
 import ExcelJS from 'exceljs';
 import jsPDF from 'jspdf';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 // GET /api/export?type=registrations&format=excel
 // GET /api/export?type=events&format=pdf
 export async function GET(request: NextRequest) {

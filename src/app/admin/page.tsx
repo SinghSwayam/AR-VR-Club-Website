@@ -91,7 +91,9 @@ export default function AdminDashboard() {
           isOpen: true,
           type: 'success',
           title: 'Profile Updated',
-          message: 'Your profile has been successfully updated.'
+          message: 'Your profile has been successfully updated.',
+          // FIX: Reload page on close to refresh AuthContext data
+          onClose: () => window.location.reload()
         });
       } else {
         setStatusModal({
@@ -238,12 +240,16 @@ export default function AdminDashboard() {
 
       <ChangePasswordModal isOpen={showPasswordModal} onClose={() => setShowPasswordModal(false)} />
 
+      {/* FIX: Properly execute onClose when modal is closed */}
       <StatusModal
         isOpen={statusModal.isOpen}
         type={statusModal.type}
         title={statusModal.title}
         message={statusModal.message}
-        onClose={() => setStatusModal({ ...statusModal, isOpen: false })}
+        onClose={() => {
+            setStatusModal({ ...statusModal, isOpen: false });
+            if (statusModal.onClose) statusModal.onClose();
+        }}
       />
 
       {/* Complete/Edit Profile Modal */}
@@ -255,7 +261,7 @@ export default function AdminDashboard() {
         }} onClick={() => !profileLoading && setShowProfileModal(false)}>
           <div className="glass-card" style={{ maxWidth: '500px', width: '90%', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowProfileModal(false)} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
-              <XIcon size={20} />
+              <XIcon size={20} weight="duotone" />
             </button>
             <h3 style={{ marginTop: 0, marginBottom: '0.5rem', color: 'white', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <UserIcon size={28} color="#60a5fa" weight="duotone" /> Edit Profile

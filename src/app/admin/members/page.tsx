@@ -74,7 +74,7 @@ export default function MemberManagementPage() {
     message: ''
   });
 
-  // FIX: Dark style for dropdown options
+  // Dark style for dropdown options
   const optionStyle = { backgroundColor: '#1e293b', color: 'white' };
 
   useEffect(() => {
@@ -93,10 +93,13 @@ export default function MemberManagementPage() {
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/admin/users', {
+      
+      const t = new Date().getTime();
+      const res = await fetch(`/api/admin/users?t=${t}`, {
         cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
       });
+      
       const data = await res.json();
       if (data.success) {
         setMembers(data.data);
@@ -322,7 +325,7 @@ export default function MemberManagementPage() {
           <div className="glass-card" style={{ maxWidth: '600px', width: '90%', maxHeight: '90vh', overflowY: 'auto', padding: '2rem' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
               <h3 style={{ color: 'white', margin: 0 }}>{editingMember ? 'Edit' : 'Add'} Member</h3>
-              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><XIcon size={20} /></button>
+              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><XIcon size={20} weight="duotone" /></button>
             </div>
 
             <form onSubmit={handleSubmit}>
