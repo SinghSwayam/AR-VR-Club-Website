@@ -7,10 +7,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseService } from '@/lib/supabase/service';
 import { supabaseAdmin } from '@/lib/supabase/client';
 
+// FIX: Force dynamic rendering to bypass Vercel Data Cache
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 // GET /api/admin/registrations - Get all registrations with event details
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Add Firebase Admin auth check
     const service = getSupabaseService();
     
     // Get all registrations
@@ -58,7 +61,7 @@ export async function GET(request: NextRequest) {
       data: registrationsWithEvents,
     });
     
-    // Prevent caching
+    // Prevent caching headers
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
@@ -75,4 +78,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

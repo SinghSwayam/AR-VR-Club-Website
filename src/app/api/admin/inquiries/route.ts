@@ -6,11 +6,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/client';
 
+// FIX: Force dynamic rendering to bypass Vercel Data Cache
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 // GET /api/admin/inquiries - Get all inquiries
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Add Firebase Admin auth check
-    
     const { data: inquiries, error } = await supabaseAdmin
       .from('inquiries')
       .select('*')
@@ -47,4 +49,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

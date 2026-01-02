@@ -31,7 +31,13 @@ interface Registration {
   status: 'confirmed' | 'cancelled';
   event_title?: string;
 }
-interface Event { id: string; title: string; }
+
+interface Event { 
+    id?: string; 
+    ID?: string;
+    title?: string; 
+    Title?: string;
+}
 
 export default function RegistrationsManagementPage() {
   const { authUser, loading: authLoading } = useAuth();
@@ -41,6 +47,9 @@ export default function RegistrationsManagementPage() {
   const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState({ year: '', dept: '', eventId: '', status: '', search: '' });
+
+  // Dark style for dropdown options
+  const optionStyle = { backgroundColor: '#1e293b', color: 'white' };
 
   useEffect(() => {
     if (!authLoading) {
@@ -60,9 +69,12 @@ export default function RegistrationsManagementPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const regRes = await fetch('/api/admin/registrations', {
+      
+      // FIX: Add timestamp query param to bust cache
+      const t = new Date().getTime();
+      const regRes = await fetch(`/api/admin/registrations?t=${t}`, {
         cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
       });
       const regData = await regRes.json();
 
@@ -70,7 +82,7 @@ export default function RegistrationsManagementPage() {
         setRegistrations(regData.data);
       }
 
-      const evtRes = await fetch('/api/events', { cache: 'no-store' });
+      const evtRes = await fetch(`/api/events?t=${t}`, { cache: 'no-store' });
       const evtData = await evtRes.json();
       if (evtData.success) setEvents(evtData.data);
     } catch (e: any) {
@@ -93,7 +105,10 @@ export default function RegistrationsManagementPage() {
   const filteredRegistrations = registrations.filter(r => {
     if (filters.year && r.year !== filters.year) return false;
     if (filters.dept && r.dept !== filters.dept) return false;
+    
+    // FIX: Ensure strict string comparison for event ID
     if (filters.eventId && r.event_id !== filters.eventId) return false;
+    
     if (filters.status && r.status !== filters.status) return false;
 
     if (filters.search) {
@@ -134,9 +149,9 @@ export default function RegistrationsManagementPage() {
                 </p>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn-outline" onClick={fetchData} title="Refresh"><ArrowsClockwiseIcon size={18} /></button>
-                <button className="btn" onClick={() => handleExport('excel')}><DownloadSimpleIcon size={18} style={{ marginRight: '8px' }} /> Excel</button>
-                <button className="btn-outline" onClick={() => handleExport('pdf')} title="PDF"><DownloadSimpleIcon size={18} /></button>
+                <button className="btn-outline" onClick={fetchData} title="Refresh"><ArrowsClockwiseIcon size={18}  /></button>
+                <button className="btn" onClick={() => handleExport('excel')}><DownloadSimpleIcon size={18}  style={{ marginRight: '8px' }} /> Excel</button>
+                <button className="btn-outline" onClick={() => handleExport('pdf')} title="PDF"><DownloadSimpleIcon size={18}  /></button>
               </div>
             </div>
 
@@ -145,16 +160,20 @@ export default function RegistrationsManagementPage() {
                 <div style={{ flex: 1, minWidth: '200px' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: '#cbd5e1', fontSize: '0.9rem' }}>Event</label>
                   <select className="form-input" value={filters.eventId} onChange={(e) => setFilters({ ...filters, eventId: e.target.value })} style={{ marginBottom: 0 }}>
-                    <option value="" style={{ color: 'black' }}>All Events</option>
-                    {events.map(e => <option key={e.id} value={e.id} style={{ color: 'black' }}>{e.title}</option>)}
+                    <option value="" style={optionStyle}>All Events</option>
+                    {events.map(e => {
+                        const id = e.id || e.ID;
+                        const title = e.title || e.Title;
+                        return <option key={id} value={id} style={optionStyle}>{title}</option>
+                    })}
                   </select>
                 </div>
                 <div style={{ flex: 1, minWidth: '150px' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: '#cbd5e1', fontSize: '0.9rem' }}>Status</label>
                   <select className="form-input" value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })} style={{ marginBottom: 0 }}>
-                    <option value="" style={{ color: 'black' }}>All Status</option>
-                    <option value="confirmed" style={{ color: 'black' }}>Confirmed</option>
-                    <option value="cancelled" style={{ color: 'black' }}>Cancelled</option>
+                    <option value="" style={optionStyle}>All Status</option>
+                    <option value="confirmed" style={optionStyle}>Confirmed</option>
+                    <option value="cancelled" style={optionStyle}>Cancelled</option>
                   </select>
                 </div>
                 <div style={{ flex: 1, minWidth: '200px' }}>
@@ -180,8 +199,7 @@ export default function RegistrationsManagementPage() {
                   <tbody>
                     {filteredRegistrations.length > 0 ? (
                       filteredRegistrations.map(r => {
-                        // Find event status
-                        const event = events.find((e: any) => (e.id === r.event_id || e.ID === r.event_id));
+                        const event = events.find((e) => (e.id === r.event_id || e.ID === r.event_id));
                         const eventStatus = (event as any)?.Status || (event as any)?.status;
                         const isEventDone = eventStatus === 'Closed' || eventStatus === 'Completed';
                         const displayStatus = (r.status === 'confirmed' && isEventDone) ? 'DONE' : r.status;
