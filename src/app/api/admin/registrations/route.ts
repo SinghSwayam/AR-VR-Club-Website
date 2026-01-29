@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseService } from '@/lib/supabase/service';
-import { supabaseAdmin } from '@/lib/supabase/client';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 // FIX: Force dynamic rendering to bypass Vercel Data Cache
 export const dynamic = 'force-dynamic';
@@ -15,10 +15,10 @@ export const fetchCache = 'force-no-store';
 export async function GET(request: NextRequest) {
   try {
     const service = getSupabaseService();
-    
+
     // Get all registrations
     const registrations = await service.getAllRegistrations();
-    
+
     if (registrations.length === 0) {
       return NextResponse.json({
         success: true,
@@ -60,12 +60,12 @@ export async function GET(request: NextRequest) {
       success: true,
       data: registrationsWithEvents,
     });
-    
+
     // Prevent caching headers
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
-    
+
     return response;
   } catch (error: any) {
     console.error('Error fetching registrations:', error);

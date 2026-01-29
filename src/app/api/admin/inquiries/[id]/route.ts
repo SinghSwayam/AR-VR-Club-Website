@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/client';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 // PUT /api/admin/inquiries/[id] - Update inquiry status
 export async function PUT(
@@ -50,7 +50,7 @@ export async function PUT(
     });
 
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    
+
     return response;
   } catch (error: any) {
     console.error('Error in update inquiry API:', error);

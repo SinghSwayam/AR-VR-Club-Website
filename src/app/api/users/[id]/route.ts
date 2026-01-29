@@ -79,7 +79,7 @@ export async function DELETE(
     const service = getSupabaseService();
 
     // Check if user has registrations
-    const { supabaseAdmin } = await import('@/lib/supabase/client');
+    const { supabaseAdmin } = await import('@/lib/supabase/admin');
     const { data: registrations } = await supabaseAdmin
       .from('registrations')
       .select('registration_id')

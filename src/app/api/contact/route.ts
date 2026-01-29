@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/client';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 // POST /api/contact - Submit contact form
 export async function POST(request: NextRequest) {
@@ -69,11 +69,11 @@ export async function POST(request: NextRequest) {
 
     // Prevent caching
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    
+
     return response;
   } catch (error: any) {
     console.error('Error processing contact form:', error);
-    
+
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
       return NextResponse.json(
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       {
         success: false,

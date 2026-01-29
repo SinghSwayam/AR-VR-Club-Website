@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/client';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 // FIX: Force dynamic rendering to bypass Vercel Data Cache
 export const dynamic = 'force-dynamic';
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     // Prevent caching
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    
+
     return response;
   } catch (error: any) {
     console.error('Error in inquiries API:', error);

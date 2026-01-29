@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
           // Get all registrations and add event information
           const registrations = await service.getAllRegistrations();
           if (registrations.length > 0) {
-            const { supabaseAdmin } = await import('@/lib/supabase/client');
+            const { supabaseAdmin } = await import('@/lib/supabase/admin');
             const eventIds = registrations.map(reg => reg.event_id);
             const { data: events } = await supabaseAdmin
               .from('events')
